@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="sample.png" alt="Screenshot" width="900">
+  <img src="sample.PNG" alt="Screenshot" width="900">
 </p>
 # 🚀 Bang Shares - Local File & Message Sharing
 
