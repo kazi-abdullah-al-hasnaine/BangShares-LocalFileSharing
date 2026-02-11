@@ -1,9 +1,10 @@
-<p align="center">
-  <img src="sample.PNG" alt="Screenshot" width="900">
-</p>
+
 # 🚀 Bang Shares - Local File & Message Sharing
 
 A modern, real-time file and text sharing application that works seamlessly across devices on your local network. Share files, messages, and more without leaving your WiFi network—no accounts, no uploads, no intermediaries.
+<p align="center">
+  <img src="sample.PNG" alt="Screenshot" width="900">
+</p>
 
 ![GitHub License](https://img.shields.io/badge/license-MIT-green)
 ![Python](https://img.shields.io/badge/python-3.7%2B-blue)
