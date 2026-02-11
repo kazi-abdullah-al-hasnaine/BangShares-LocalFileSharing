@@ -1,4 +1,6 @@
-# 🚀 WiFi Share - Local File & Message Sharing
+![UI](sample.png)
+
+# 🚀 WBang Shares - Local File & Message Sharing
 
 A modern, real-time file and text sharing application that works seamlessly across devices on your local network. Share files, messages, and more without leaving your WiFi network—no accounts, no uploads, no intermediaries.
 
