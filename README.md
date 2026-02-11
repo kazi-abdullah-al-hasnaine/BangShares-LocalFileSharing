@@ -1,6 +1,6 @@
-![UI](./sample.png)
-
-
+<p align="center">
+  <img src="sample.png" alt="Screenshot" width="900">
+</p>
 # 🚀 Bang Shares - Local File & Message Sharing
 
 A modern, real-time file and text sharing application that works seamlessly across devices on your local network. Share files, messages, and more without leaving your WiFi network—no accounts, no uploads, no intermediaries.
