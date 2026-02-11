@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bang Shares - Share Files & Messages</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        /* Modern, professional website styling with rich green theme */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a4d2e 0%, #2d5f3f 50%, #1a4d2e 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: #4ade80;
+            padding: 5px;
+        }
+
+        .brand-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .online-counter {
+            background: rgba(74, 222, 128, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .connection-status {
+            background: rgba(239, 68, 68, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #ef4444;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #ef4444;
+        }
+
+        .connection-status.connected {
+            background: rgba(74, 222, 128, 0.2);
+            border-color: #4ade80;
+            color: #4ade80;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+
+        .connection-status.connected .status-dot {
+            background: #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .nav-btn {
+            background: rgba(74, 222, 128, 0.2);
+            border: 2px solid #4ade80;
+            color: #4ade80;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: #4ade80;
+            color: #1a4d2e;
+            transform: translateY(-2px);
+        }
+
+        /* Main Container - Full Screen */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 105px);
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Chat Container - Full Width */
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .chat-header h2 {
+            color: #4ade80;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #334155;
+            font-size: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #94a3b8;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .close-btn:hover {
+            color: #64748b;
+        }
+
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        #qrcode {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .url-info {
+            width: 100%;
+        }
+
+        .url-box {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #475569;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        /* Profile Modal Styles */
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+        }
+
+        .profile-pic-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-pic-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            border: 3px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .profile-pic-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-pic-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .profile-pic-btn:hover {
+            background: #5568d3;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Message Styles */
+        .message {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.3);
+            border: 2px solid #4ade80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .message-content {
+            max-width: 60%;
+            padding: 15px 20px;
+            border-radius: 15px;
+            word-wrap: break-word;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .message.sent .message-content {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: #1a4d2e;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.received .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #ffffff;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-sender {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .message.sent .message-sender {
+            color: #1a4d2e;
+        }
+
+        .message.received .message-sender {
+            color: #4ade80;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .file-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .file-info {
+            font-weight: 600;
+        }
+
+        .file-size {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+
+        .download-btn {
+            background: #4ade80;
+            color: #1a4d2e;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            background: #22c55e;
+            transform: translateY(-2px);
+        }
+
+        .message.sent .download-btn {
+            background: rgba(26, 77, 46, 0.3);
+            color: #1a4d2e;
+        }
+
+        .message.received .download-btn {
+            background: #4ade80;
+            color: #1a4d2e;
+        }
+
+        /* Input Area */
+        .chat-input {
+            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 2px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .message-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .message-input:focus {
+            border-color: #4ade80;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .input-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(74, 222, 128, 0.2);
+            border: 2px solid #4ade80;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+            flex-shrink: 0;
+            font-weight: 600;
+        }
+
+        .input-btn:hover {
+            background: #4ade80;
+            color: #1a4d2e;
+        }
+
+        .send-btn {
+            background: #4ade80;
+            color: #1a4d2e;
+            border: none;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #22c55e;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(26, 77, 46, 0.95);
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #4ade80;
+            font-size: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .close-btn:hover {
+            color: #4ade80;
+        }
+
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+
+        #qrcode {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .url-info {
+            width: 100%;
+        }
+
+        .url-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #4ade80;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        /* Profile Modal Styles */
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #4ade80;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-group input:focus {
+            border-color: #4ade80;
+        }
+
+        .profile-pic-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-pic-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            border: 3px solid #4ade80;
+            overflow: hidden;
+        }
+
+        .profile-pic-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-pic-btn {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            border: 2px solid #4ade80;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .profile-pic-btn:hover {
+            background: #4ade80;
+            color: #1a4d2e;
+        }
+
+        .save-btn {
+            background: #4ade80;
+            color: #1a4d2e;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .save-btn:hover {
+            background: #22c55e;
+            transform: translateY(-2px);
+        }
+
+        /* Upload Progress Styles */
+        .upload-progress-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(26, 77, 46, 0.95);
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            min-width: 300px;
+            max-width: 400px;
+            z-index: 100;
+        }
+
+        .upload-item {
+            margin-bottom: 15px;
+        }
+
+        .upload-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .upload-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .upload-filename {
+            font-weight: 600;
+            color: #4ade80;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .upload-size {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-left: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(74, 222, 128, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .upload-status {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .upload-complete {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .upload-error {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        /* Scrollbar styling */
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(74, 222, 128, 0.4);
+            border-radius: 4px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(74, 222, 128, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 12px 20px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .brand-name {
+                font-size: 20px;
+            }
+
+            .nav-right {
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .connection-status,
+            .online-counter,
+            .nav-btn {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .upload-progress-container {
+                min-width: 80%;
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo-section">
+            <img src="logo.png" alt="Bang Shares Logo" class="logo-img" onerror="this.style.display='none'">
+            <div class="brand-name">
+                <span></span>
+                <span>Bang Shares</span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="connection-status" id="connectionStatus">
+                <div class="status-dot"></div>
+                <span>Disconnected</span>
+            </div>
+            <div class="online-counter">
+                <div class="online-dot"></div>
+                <span id="onlineCount">0 online</span>
+            </div>
+            <button class="nav-btn" onclick="openShareModal()">
+                <span>🔗</span>
+                <span>Share Link</span>
+            </button>
+            <div class="profile-avatar" onclick="openProfileModal()" id="headerAvatar">
+                👤
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Chat Section -->
+        <div class="chat-section">
+            
+            <div class="chat-container" id="chatContainer">
+                <div style="text-align: center; padding: 40px; color: rgba(255, 255, 255, 0.5);">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🐸</div>
+                    <div style="font-size: 18px;">Welcome to Bang Shares!</div>
+                    <div style="font-size: 14px; margin-top: 10px;">Start sharing files and messages with devices on your WiFi network</div>
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <div class="input-wrapper">
+                    <input type="text" id="messageInput" class="message-input" placeholder="Type a message..." />
+                    <button class="input-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">
+                        📎
+                    </button>
+                    <button class="input-btn send-btn" onclick="sendMessage()" title="Send message">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                <input type="file" id="fileInput" multiple>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Progress Indicator -->
+    <div id="uploadProgressContainer" style="display: none;" class="upload-progress-container">
+        <!-- Progress items will be added here dynamically -->
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📡 Share Connection</h2>
+                <button class="close-btn" onclick="closeShareModal()">&times;</button>
+            </div>
+            <div class="qr-container">
+                <div id="qrcode"></div>
+                <div class="url-info">
+                    <div class="url-box" id="urlDisplay">Loading...</div>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 13px; text-align: center; margin: 0;">
+                        Scan QR code or enter this URL on your mobile device
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👤 Profile Settings</h2>
+                <button class="close-btn" onclick="closeProfileModal()">&times;</button>
+            </div>
+            <div class="profile-form">
+                <div class="profile-pic-container">
+                    <div class="profile-pic-preview" id="profilePicPreview">
+                        👤
+                    </div>
+                    <button class="profile-pic-btn" onclick="document.getElementById('profilePicInput').click()">
+                        Change Picture
+                    </button>
+                    <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+                </div>
+                <div class="form-group">
+                    <label for="nameInput">Your Name</label>
+                    <input type="text" id="nameInput" placeholder="Enter your name" maxlength="30">
+                </div>
+                <button class="save-btn" onclick="saveProfile()">
+                    Save Profile
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code generation library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <script>
+        // WebSocket connection
+        let ws = null;
+        let reconnectInterval = null;
+        let clientId = null;  // Unique client ID assigned by server
+        let userProfile = {
+            name: '',
+            profilePic: ''
+        };
+        
+        // Store for receiving chunked files
+        let receivingFiles = {};
+        
+        // Online users count
+        let onlineUsers = 0;
+
+        /**
+         * Load user profile from localStorage
+         */
+        function loadProfile() {
+            const saved = localStorage.getItem('wifiShareProfile');
+            if (saved) {
+                userProfile = JSON.parse(saved);
+                updateProfileDisplay();
+            }
+        }
+
+        /**
+         * Load client ID from localStorage or generate new one
+         */
+        function loadClientId() {
+            let savedClientId = localStorage.getItem('wifiShareClientId');
+            if (!savedClientId) {
+                savedClientId = 'client_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('wifiShareClientId', savedClientId);
+            }
+            return savedClientId;
+        }
+
+        /**
+         * Save user profile to localStorage
+         */
+        function saveProfile() {
+            const name = document.getElementById('nameInput').value.trim();
+            const profilePic = userProfile.profilePic;
+
+            if (name) {
+                userProfile.name = name;
+                userProfile.profilePic = profilePic;
+                localStorage.setItem('wifiShareProfile', JSON.stringify(userProfile));
+                updateProfileDisplay();
+                closeProfileModal();
+                
+                // Show success message
+                alert('Profile saved successfully!');
+            } else {
+                alert('Please enter your name');
+            }
+        }
+
+        /**
+         * Update profile display in header and modal
+         */
+        function updateProfileDisplay() {
+            const headerAvatar = document.getElementById('headerAvatar');
+            const profilePicPreview = document.getElementById('profilePicPreview');
+            const nameInput = document.getElementById('nameInput');
+
+            if (userProfile.profilePic) {
+                headerAvatar.innerHTML = `<img src="${userProfile.profilePic}" alt="Profile">`;
+                profilePicPreview.innerHTML = `<img src="${userProfile.profilePic}" alt="Profile">`;
+            } else {
+                headerAvatar.innerHTML = userProfile.name ? userProfile.name.charAt(0).toUpperCase() : '👤';
+                profilePicPreview.innerHTML = userProfile.name ? userProfile.name.charAt(0).toUpperCase() : '👤';
+            }
+
+            if (nameInput) {
+                nameInput.value = userProfile.name;
+            }
+        }
+
+        /**
+         * Handle profile picture selection
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('profilePicInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        userProfile.profilePic = event.target.result;
+                        updateProfileDisplay();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        /**
+         * Open/Close Share Modal
+         */
+        function openShareModal() {
+            document.getElementById('shareModal').classList.add('active');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+        }
+
+        /**
+         * Open/Close Profile Modal
+         */
+        function openProfileModal() {
+            updateProfileDisplay();
+            document.getElementById('profileModal').classList.add('active');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.remove('active');
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        /**
+         * Get the WebSocket URL based on current location
+         * Automatically detects the server IP from the current page URL
+         */
+        function getWebSocketUrl() {
+            const hostname = window.location.hostname;
+            const wsPort = 8765;
+            return `ws://${hostname}:${wsPort}`;
+        }
+
+        /**
+         * Get the HTTP URL for sharing
+         */
+        function getHttpUrl() {
+            return window.location.href;
+        }
+
+        /**
+         * Connect to the WebSocket server
+         */
+        function connect() {
+            const wsUrl = getWebSocketUrl();
+            
+            try {
+                ws = new WebSocket(wsUrl);
+
+                // Connection opened
+                ws.onopen = () => {
+                    console.log('Connected to WebSocket server');
+                    updateConnectionStatus(true);
+                    
+                    // Load persistent client ID from localStorage
+                    let persistedClientId = localStorage.getItem('wifiShareClientId');
+                    if (!persistedClientId) {
+                        persistedClientId = 'client_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                        localStorage.setItem('wifiShareClientId', persistedClientId);
+                    }
+                    
+                    // Send client ID to server for registration
+                    ws.send(JSON.stringify({
+                        type: 'register',
+                        clientId: persistedClientId
+                    }));
+                    
+                    // Clear reconnection interval if exists
+                    if (reconnectInterval) {
+                        clearInterval(reconnectInterval);
+                        reconnectInterval = null;
+                    }
+                };
+
+                // Listen for messages
+                ws.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleIncomingMessage(data);
+                    } catch (error) {
+                        console.error('Error parsing message:', error);
+                    }
+                };
+
+                // Connection closed
+                ws.onclose = () => {
+                    console.log('Disconnected from WebSocket server');
+                    updateConnectionStatus(false);
+                    
+                    // Attempt to reconnect every 3 seconds
+                    if (!reconnectInterval) {
+                        reconnectInterval = setInterval(() => {
+                            console.log('Attempting to reconnect...');
+                            connect();
+                        }, 3000);
+                    }
+                };
+
+                // Connection error
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+
+            } catch (error) {
+                console.error('Error creating WebSocket:', error);
+                updateConnectionStatus(false);
+            }
+        }
+
+        /**
+         * Update the connection status indicator
+         */
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            if (connected) {
+                statusElement.className = 'connection-status connected';
+                statusElement.innerHTML = '<div class="status-dot"></div><span>Connected</span>';
+            } else {
+                statusElement.className = 'connection-status';
+                statusElement.innerHTML = '<div class="status-dot"></div><span>Disconnected</span>';
+            }
+        }
+
+        /**
+         * Update the online users count
+         */
+        function updateOnlineCount(count) {
+            onlineUsers = count;
+            const onlineElement = document.getElementById('onlineCount');
+            if (onlineElement) {
+                onlineElement.textContent = count + (count === 1 ? ' user online' : ' users online');
+            }
+        }
+
+        /**
+         * Handle incoming messages from WebSocket
+         */
+        function handleIncomingMessage(data) {
+            const chatContainer = document.getElementById('chatContainer');
+            
+            if (data.type === 'client_id') {
+                // Store the server-assigned client ID
+                clientId = data.clientId;
+                localStorage.setItem('wifiShareClientId', clientId);
+                console.log('Client ID assigned:', clientId);
+                
+            } else if (data.type === 'history') {
+                // Load chat history
+                loadChatHistory(data.messages);
+                
+            } else if (data.type === 'online_count') {
+                // Update online users count
+                updateOnlineCount(data.count);
+                
+            } else if (data.type === 'text') {
+                // Display received text message with avatar
+                const messageDiv = document.createElement('div');
+                const isSent = data.clientId === clientId;
+                messageDiv.className = isSent ? 'message sent' : 'message received';
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                avatar.textContent = data.senderName ? data.senderName.charAt(0).toUpperCase() : '?';
+                if (data.senderPic) {
+                    avatar.innerHTML = `<img src="${data.senderPic}" alt="Avatar">`;
+                }
+                
+                const content = document.createElement('div');
+                content.className = 'message-content';
+                content.innerHTML = `
+                    <div class="message-sender">${escapeHtml(data.senderName || data.sender)}</div>
+                    <div>${escapeHtml(data.content)}</div>
+                `;
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+                chatContainer.appendChild(messageDiv);
+                
+            } else if (data.type === 'file_chunk') {
+                // Handle chunked file reception
+                handleFileChunk(data);
+                
+            } else if (data.type === 'file') {
+                // Handle single-chunk file (for backward compatibility)
+                displayReceivedFile(data);
+            }
+            
+            // Auto-scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        /**
+         * Load chat history
+         */
+        function loadChatHistory(messages) {
+            console.log(`Loading ${messages.length} messages from history`);
+            
+            messages.forEach(msg => {
+                if (msg.type === 'text') {
+                    const chatContainer = document.getElementById('chatContainer');
+                    const messageDiv = document.createElement('div');
+                    const isSent = msg.clientId === clientId;
+                    messageDiv.className = isSent ? 'message sent' : 'message received';
+                    
+                    const avatar = document.createElement('div');
+                    avatar.className = 'message-avatar';
+                    avatar.textContent = msg.senderName ? msg.senderName.charAt(0).toUpperCase() : '?';
+                    if (msg.senderPic) {
+                        avatar.innerHTML = `<img src="${msg.senderPic}" alt="Avatar">`;
+                    }
+                    
+                    const content = document.createElement('div');
+                    content.className = 'message-content';
+                    content.innerHTML = `
+                        <div class="message-sender">${escapeHtml(msg.senderName || msg.sender)}</div>
+                        <div>${escapeHtml(msg.content)}</div>
+                    `;
+                    
+                    messageDiv.appendChild(avatar);
+                    messageDiv.appendChild(content);
+                    chatContainer.appendChild(messageDiv);
+                    
+                } else if (msg.type === 'file' && msg.note) {
+                    // Show file metadata from history (file content not available)
+                    const chatContainer = document.getElementById('chatContainer');
+                    const messageDiv = document.createElement('div');
+                    const isSent = msg.clientId === clientId;
+                    messageDiv.className = isSent ? 'message sent' : 'message received';
+                    
+                    const avatar = document.createElement('div');
+                    avatar.className = 'message-avatar';
+                    avatar.textContent = msg.senderName ? msg.senderName.charAt(0).toUpperCase() : '?';
+                    if (msg.senderPic) {
+                        avatar.innerHTML = `<img src="${msg.senderPic}" alt="Avatar">`;
+                    }
+                    
+                    const content = document.createElement('div');
+                    content.className = 'message-content';
+                    content.innerHTML = `
+                        <div class="message-sender">${escapeHtml(msg.senderName || msg.sender)}</div>
+                        <div class="file-icon">📄</div>
+                        <div class="file-info">${escapeHtml(msg.filename)}</div>
+                        <div class="file-size">${formatFileSize(msg.filesize)}</div>
+                        <div style="color: #94a3b8; font-size: 12px; margin-top: 5px;">${msg.note}</div>
+                    `;
+                    
+                    messageDiv.appendChild(avatar);
+                    messageDiv.appendChild(content);
+                    chatContainer.appendChild(messageDiv);
+                }
+            });
+        }
+
+        /**
+         * Handle receiving file chunks
+         */
+        function handleFileChunk(data) {
+            const fileId = data.fileId;
+            
+            // Initialize file reception if first chunk
+            if (!receivingFiles[fileId]) {
+                receivingFiles[fileId] = {
+                    filename: data.filename,
+                    filesize: data.filesize,
+                    chunks: [],  // Store as array to build Blob later
+                    receivedChunks: 0,
+                    totalChunks: data.totalChunks,
+                    senderName: data.senderName,
+                    senderPic: data.senderPic,
+                    sender: data.sender,
+                    clientId: data.clientId
+                };
+                
+                // Show download progress
+                showDownloadProgress(fileId, data.filename, data.filesize);
+            }
+            
+            // Store chunk as Blob to save memory
+            const fileData = receivingFiles[fileId];
+            
+            // Convert base64 to Blob
+            const byteCharacters = atob(data.chunk);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray]);
+            
+            fileData.chunks.push(blob);
+            fileData.receivedChunks++;
+            
+            // Update progress
+            const progress = (fileData.receivedChunks / fileData.totalChunks) * 100;
+            updateDownloadProgress(fileId, progress, fileData.receivedChunks, fileData.totalChunks);
+            
+            // Check if all chunks received
+            if (fileData.receivedChunks === fileData.totalChunks) {
+                // Combine all blob chunks into one
+                const completeBlob = new Blob(fileData.chunks);
+                
+                // Create download link immediately to avoid memory issues
+                const url = URL.createObjectURL(completeBlob);
+                
+                // Display the complete file with download capability
+                const isSent = fileData.clientId === clientId;
+                displayReceivedFileWithBlob(fileData, url, isSent);
+                
+                // Clean up
+                completeDownload(fileId);
+                
+                // Clear chunks from memory
+                delete receivingFiles[fileId];
+            }
+        }
+
+        /**
+         * Display received file using Blob URL (memory efficient for large files)
+         */
+        function displayReceivedFileWithBlob(fileData, blobUrl, isSent = false) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isSent ? 'message sent' : 'message received';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = fileData.senderName ? fileData.senderName.charAt(0).toUpperCase() : '?';
+            if (fileData.senderPic) {
+                avatar.innerHTML = `<img src="${fileData.senderPic}" alt="Avatar">`;
+            }
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.innerHTML = `
+                <div class="message-sender">${escapeHtml(fileData.senderName || fileData.sender)}</div>
+                <div class="file-icon">📄</div>
+                <div class="file-info">${escapeHtml(fileData.filename)}</div>
+                <div class="file-size">${formatFileSize(fileData.filesize)}</div>
+                <a href="${blobUrl}" download="${escapeHtml(fileData.filename)}" class="download-btn" style="text-decoration: none; display: inline-block;">
+                    ⬇️ Download
+                </a>
+            `;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        /**
+         * Show download progress indicator
+         */
+        function showDownloadProgress(fileId, filename, filesize) {
+            const container = document.getElementById('uploadProgressContainer');
+            container.style.display = 'block';
+
+            const progressItem = document.createElement('div');
+            progressItem.className = 'upload-item';
+            progressItem.id = 'download_' + fileId;
+            progressItem.innerHTML = `
+                <div class="upload-header">
+                    <div class="upload-filename" title="${escapeHtml(filename)}">${escapeHtml(filename)}</div>
+                    <div class="upload-size">${formatFileSize(filesize)}</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="upload-status">
+                    <span class="status-text">Receiving...</span>
+                    <span class="status-percent">0%</span>
+                </div>
+            `;
+
+            container.appendChild(progressItem);
+        }
+
+        /**
+         * Update download progress
+         */
+        function updateDownloadProgress(fileId, progress, receivedChunks, totalChunks) {
+            const progressItem = document.getElementById('download_' + fileId);
+            if (!progressItem) return;
+
+            const progressFill = progressItem.querySelector('.progress-fill');
+            const statusPercent = progressItem.querySelector('.status-percent');
+            const statusText = progressItem.querySelector('.status-text');
+
+            progressFill.style.width = progress + '%';
+            statusPercent.textContent = Math.round(progress) + '%';
+            statusText.textContent = `Receiving chunk ${receivedChunks}/${totalChunks}...`;
+        }
+
+        /**
+         * Mark download as complete
+         */
+        function completeDownload(fileId) {
+            const progressItem = document.getElementById('download_' + fileId);
+            if (!progressItem) return;
+
+            const statusText = progressItem.querySelector('.status-text');
+            statusText.className = 'upload-complete';
+            statusText.textContent = '✓ Download complete';
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                progressItem.remove();
+                
+                // Hide container if no more uploads/downloads
+                const container = document.getElementById('uploadProgressContainer');
+                if (container.children.length === 0) {
+                    container.style.display = 'none';
+                }
+            }, 3000);
+        }
+
+        /**
+         * Send a text message
+         */
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message && ws && ws.readyState === WebSocket.OPEN) {
+                // Send message to server with profile info
+                ws.send(JSON.stringify({
+                    type: 'text',
+                    content: message,
+                    senderName: userProfile.name || 'Anonymous',
+                    senderPic: userProfile.profilePic,
+                    timestamp: new Date().toISOString()
+                }));
+                
+                // Display sent message locally with avatar
+                const chatContainer = document.getElementById('chatContainer');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message sent';
+                
+                const content = document.createElement('div');
+                content.className = 'message-content';
+                content.innerHTML = `
+                    <div>${escapeHtml(message)}</div>
+                `;
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                if (userProfile.profilePic) {
+                    avatar.innerHTML = `<img src="${userProfile.profilePic}" alt="You">`;
+                } else {
+                    avatar.textContent = userProfile.name ? userProfile.name.charAt(0).toUpperCase() : '👤';
+                }
+                
+                messageDiv.appendChild(content);
+                messageDiv.appendChild(avatar);
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // Clear input
+                input.value = '';
+            }
+        }
+
+        /**
+         * Send a file through WebSocket with chunked upload for large files
+         */
+        function sendFile(file) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                alert('Not connected to server. Please wait for connection.');
+                return;
+            }
+
+            const CHUNK_SIZE = 512 * 1024; // 512KB chunks for smooth progress
+            const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+            let currentChunk = 0;
+            const fileId = 'upload_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+            // Show upload progress
+            showUploadProgress(fileId, file.name, file.size);
+
+            // Function to read and send chunks
+            function sendNextChunk() {
+                const start = currentChunk * CHUNK_SIZE;
+                const end = Math.min(start + CHUNK_SIZE, file.size);
+                const chunk = file.slice(start, end);
+
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    const base64Data = e.target.result.split(',')[1];
+                    
+                    // Send chunk
+                    ws.send(JSON.stringify({
+                        type: 'file_chunk',
+                        fileId: fileId,
+                        filename: file.name,
+                        filesize: file.size,
+                        chunk: base64Data,
+                        chunkIndex: currentChunk,
+                        totalChunks: totalChunks,
+                        senderName: userProfile.name || 'Anonymous',
+                        senderPic: userProfile.profilePic,
+                        timestamp: new Date().toISOString()
+                    }));
+
+                    currentChunk++;
+                    const progress = (currentChunk / totalChunks) * 100;
+                    updateUploadProgress(fileId, progress, currentChunk, totalChunks);
+
+                    // Send next chunk or complete
+                    if (currentChunk < totalChunks) {
+                        // Minimal delay for browser processing
+                        setTimeout(sendNextChunk, 1);
+                    } else {
+                        // Upload complete
+                        completeUpload(fileId);
+                        displaySentFile(file);
+                    }
+                };
+
+                reader.onerror = () => {
+                    errorUpload(fileId, 'Failed to read file');
+                };
+
+                reader.readAsDataURL(chunk);
+            }
+
+            // Start sending chunks
+            sendNextChunk();
+        }
+
+        /**
+         * Show upload progress indicator
+         */
+        function showUploadProgress(fileId, filename, filesize) {
+            const container = document.getElementById('uploadProgressContainer');
+            container.style.display = 'block';
+
+            const progressItem = document.createElement('div');
+            progressItem.className = 'upload-item';
+            progressItem.id = fileId;
+            progressItem.innerHTML = `
+                <div class="upload-header">
+                    <div class="upload-filename" title="${escapeHtml(filename)}">${escapeHtml(filename)}</div>
+                    <div class="upload-size">${formatFileSize(filesize)}</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="upload-status">
+                    <span class="status-text">Uploading...</span>
+                    <span class="status-percent">0%</span>
+                </div>
+            `;
+
+            container.appendChild(progressItem);
+        }
+
+        /**
+         * Update upload progress
+         */
+        function updateUploadProgress(fileId, progress, currentChunk, totalChunks) {
+            const progressItem = document.getElementById(fileId);
+            if (!progressItem) return;
+
+            const progressFill = progressItem.querySelector('.progress-fill');
+            const statusPercent = progressItem.querySelector('.status-percent');
+            const statusText = progressItem.querySelector('.status-text');
+
+            progressFill.style.width = progress + '%';
+            statusPercent.textContent = Math.round(progress) + '%';
+            statusText.textContent = `Uploading chunk ${currentChunk}/${totalChunks}...`;
+        }
+
+        /**
+         * Mark upload as complete
+         */
+        function completeUpload(fileId) {
+            const progressItem = document.getElementById(fileId);
+            if (!progressItem) return;
+
+            const statusText = progressItem.querySelector('.status-text');
+            statusText.className = 'upload-complete';
+            statusText.textContent = '✓ Upload complete';
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                progressItem.remove();
+                
+                // Hide container if no more uploads
+                const container = document.getElementById('uploadProgressContainer');
+                if (container.children.length === 0) {
+                    container.style.display = 'none';
+                }
+            }, 3000);
+        }
+
+        /**
+         * Mark upload as error
+         */
+        function errorUpload(fileId, message) {
+            const progressItem = document.getElementById(fileId);
+            if (!progressItem) return;
+
+            const statusText = progressItem.querySelector('.status-text');
+            statusText.className = 'upload-error';
+            statusText.textContent = '✗ ' + message;
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                progressItem.remove();
+                
+                // Hide container if no more uploads
+                const container = document.getElementById('uploadProgressContainer');
+                if (container.children.length === 0) {
+                    container.style.display = 'none';
+                }
+            }, 5000);
+        }
+
+        /**
+         * Display a sent file in the chat
+         */
+        function displaySentFile(file) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message sent';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.innerHTML = `
+                <div class="file-icon">📄</div>
+                <div class="file-info">${escapeHtml(file.name)}</div>
+                <div class="file-size">${formatFileSize(file.size)}</div>
+            `;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            if (userProfile.profilePic) {
+                avatar.innerHTML = `<img src="${userProfile.profilePic}" alt="You">`;
+            } else {
+                avatar.textContent = userProfile.name ? userProfile.name.charAt(0).toUpperCase() : '👤';
+            }
+            
+            messageDiv.appendChild(content);
+            messageDiv.appendChild(avatar);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        /**
+         * Display a received file in the chat
+         */
+        function displayReceivedFile(data) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            const isSent = data.clientId === clientId;
+            messageDiv.className = isSent ? 'message sent' : 'message received';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = data.senderName ? data.senderName.charAt(0).toUpperCase() : '?';
+            if (data.senderPic) {
+                avatar.innerHTML = `<img src="${data.senderPic}" alt="Avatar">`;
+            }
+            
+            const fileId = 'file_' + Date.now();
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.innerHTML = `
+                <div class="message-sender">${escapeHtml(data.senderName || data.sender)}</div>
+                <div class="file-icon">📄</div>
+                <div class="file-info">${escapeHtml(data.filename)}</div>
+                <div class="file-size">${formatFileSize(data.filesize)}</div>
+                <button class="download-btn" onclick="downloadFile('${fileId}', '${escapeHtml(data.filename)}')">
+                    ⬇️ Download
+                </button>
+            `;
+            
+            // Store file data for download
+            window[fileId] = data.content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        /**
+         * Download a received file
+         */
+        function downloadFile(fileId, filename) {
+            const base64Data = window[fileId];
+            if (!base64Data) return;
+            
+            // Convert base64 to blob
+            const byteCharacters = atob(base64Data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray]);
+            
+            // Create download link
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        /**
+         * Format file size for display
+         */
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        /**
+         * Format timestamp for display
+         */
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString();
+        }
+
+        /**
+         * Escape HTML to prevent XSS
+         */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /**
+         * Handle file selection
+         */
+        function handleFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                sendFile(files[i]);
+            }
+            // Reset file input
+            document.getElementById('fileInput').value = '';
+        }
+
+        /**
+         * Initialize QR code
+         */
+        function initQRCode() {
+            const httpUrl = getHttpUrl();
+            document.getElementById('urlDisplay').textContent = httpUrl;
+            
+            // Generate QR code
+            new QRCode(document.getElementById('qrcode'), {
+                text: httpUrl,
+                width: 128,
+                height: 128,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        /**
+         * Allow sending message with Enter key
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load user profile
+            loadProfile();
+            
+            // Load existing client ID or initialize new one
+            clientId = loadClientId();
+            console.log('Using client ID:', clientId);
+            
+            const messageInput = document.getElementById('messageInput');
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // File input change
+            const fileInput = document.getElementById('fileInput');
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+            
+            // Initialize QR code
+            initQRCode();
+            
+            // Connect to WebSocket
+            connect();
+        });
+    </script>
+</body>
+</html>
